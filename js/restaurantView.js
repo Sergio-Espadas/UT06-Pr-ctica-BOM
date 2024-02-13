@@ -9,6 +9,14 @@ class RestaurantView {
         this.categorias = document.querySelector('.categories');
     }
 
+    [EXCECUTE_HANDLER](handler, handlerArguments, scrollElement, data, url,
+        event) {
+        handler(...handlerArguments);
+        $(scrollElement).get(0).scrollIntoView();
+        history.pushState(data, null, url);
+        event.preventDefault();
+    }
+
     bindInit(handler) {
         document.getElementById('init').addEventListener('click', (event) => {
             handler();
@@ -29,7 +37,7 @@ class RestaurantView {
                 `<div class="category__container">
                     <a data-category="${category.name.name}" href="#product-list">
                         <div class="cat-list-image category__photo"><img alt="${category.name.name}"
-                            src="../Imagenes/${category.name.name}.jpg" />
+                            src="./Imagenes/${category.name.name}.jpg" />
                         </div>
                         <div class="cat-list-text category_info">
                             <h3>${category.name.name}</h3>
@@ -43,6 +51,16 @@ class RestaurantView {
         this.categorias.append(container);
     }
 
+    bindInit(handler) {
+        document.getElementById('init').addEventListener('click', (event) => {
+            this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#',
+                event);
+        });
+        document.getElementById('logo').addEventListener('click', (event) => {
+            this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#',
+                event);
+        });
+    }
 
     showCategoriesInMenu(categories) {
         const div = document.createElement('div');
@@ -133,7 +151,7 @@ class RestaurantView {
                 `<div class="category__container">
                     <a data-category="${dish.dishes[0].name[aleatorio].name}" href="#product-list">
                         <div class="cat-list-image category__photo"><img alt="${dish.dishes[0].name[aleatorio].name}"
-                            src="../Imagenes/${dish.dishes[0].name[aleatorio].name}.jpg" />
+                            src="./Imagenes/${dish.dishes[0].name[aleatorio].name}.jpg" />
                         </div>
                         <div class="cat-list-text category_info">
                             <h3>${dish.dishes[0].name[aleatorio].name}</h3>
@@ -152,7 +170,15 @@ class RestaurantView {
         const links = categoryList.querySelectorAll('a');
         for (const link of links) {
             link.addEventListener('click', (event) => {
-                handler(event.currentTarget.dataset.category);
+                const { category } = event.currentTarget.dataset;
+                this[EXCECUTE_HANDLER](
+                    handler,
+                    [category],
+                    '#product-list',
+                    { action: 'productsCategoryList', category },
+                    '#category-list',
+                    event,
+                );
             });
         }
     }
@@ -162,8 +188,17 @@ class RestaurantView {
         const links = navCats.nextSibling.querySelectorAll('a');
         for (const link of links) {
             link.addEventListener('click', (event) => {
-                handler(event.currentTarget.dataset.category);
+                const { category } = event.currentTarget.dataset;
+                this[EXCECUTE_HANDLER](
+                    handler,
+                    [category],
+                    '#product-list',
+                    { action: 'productsCategoryList', category },
+                    '#category-list',
+                    event,
+                );
             });
+
         }
     }
 
@@ -172,8 +207,17 @@ class RestaurantView {
         const links = categoryList.querySelectorAll('a');
         for (const link of links) {
             link.addEventListener('click', (event) => {
-                handler(event.currentTarget.dataset.allergen);
+                const { allergen } = event.currentTarget.dataset;
+                this[EXCECUTE_HANDLER](
+                    handler,
+                    [allergen],
+                    '#product-list',
+                    { action: 'productsCategoryList', allergen },
+                    '#category-list',
+                    event,
+                );
             });
+
         }
     }
 
@@ -182,7 +226,15 @@ class RestaurantView {
         const links = navAlls.nextSibling.querySelectorAll('a');
         for (const link of links) {
             link.addEventListener('click', (event) => {
-                handler(event.currentTarget.dataset.allergen);
+                const { allergen } = event.currentTarget.dataset;
+                this[EXCECUTE_HANDLER](
+                    handler,
+                    [allergen],
+                    '#product-list',
+                    { action: 'productsCategoryList', allergen },
+                    '#category-list',
+                    event,
+                );
             });
         }
     }
@@ -192,7 +244,15 @@ class RestaurantView {
         const links = categoryList.querySelectorAll('a');
         for (const link of links) {
             link.addEventListener('click', (event) => {
-                handler(event.currentTarget.dataset.allergen);
+                const { menu } = event.currentTarget.dataset;
+                this[EXCECUTE_HANDLER](
+                    handler,
+                    [menu],
+                    '#product-list',
+                    { action: 'productsCategoryList', menu },
+                    '#category-list',
+                    event,
+                );
             });
         }
     }
@@ -202,7 +262,15 @@ class RestaurantView {
         const links = navMen.nextSibling.querySelectorAll('a');
         for (const link of links) {
             link.addEventListener('click', (event) => {
-                handler(event.currentTarget.dataset.menu);
+                const { menu } = event.currentTarget.dataset;
+                this[EXCECUTE_HANDLER](
+                    handler,
+                    [menu],
+                    '#product-list',
+                    { action: 'productsCategoryList', menu },
+                    '#category-list',
+                    event,
+                );
             });
         }
     }
@@ -212,7 +280,15 @@ class RestaurantView {
         const links = categoryList.querySelectorAll('a');
         for (const link of links) {
             link.addEventListener('click', (event) => {
-                handler(event.currentTarget.dataset.restaurant);
+                const { restaurant } = event.currentTarget.dataset;
+                this[EXCECUTE_HANDLER](
+                    handler,
+                    [restaurant],
+                    '#product-list',
+                    { action: 'productsCategoryList', restaurant },
+                    '#category-list',
+                    event,
+                );
             });
         }
     }
@@ -222,7 +298,15 @@ class RestaurantView {
         const links = navRes.nextSibling.querySelectorAll('a');
         for (const link of links) {
             link.addEventListener('click', (event) => {
-                handler(event.currentTarget.dataset.restaurant);
+                const { restaurant } = event.currentTarget.dataset;
+                this[EXCECUTE_HANDLER](
+                    handler,
+                    [restaurant],
+                    '#product-list',
+                    { action: 'productsCategoryList', restaurant },
+                    '#category-list',
+                    event,
+                );
             });
         }
     }
@@ -240,7 +324,7 @@ class RestaurantView {
                 `<div class="category__container">
                     <a data-category="${dish.name}">
                         <div class="cat-list-image category__photo"><img alt="${dish.name}"
-                            src="../Imagenes/${dish.name}.jpg" />
+                            src="./Imagenes/${dish.name}.jpg" />
                         </div>
                         <div class="cat-list-text category_info">
                             <h3>${dish.name}</h3>
@@ -268,7 +352,7 @@ class RestaurantView {
                 `<div class="category__container">
                     <a data-category="${dish.name}">
                         <div class="cat-list-image category__photo"><img alt="${dish.name}"
-                            src="../Imagenes/${dish.name}.jpg" />
+                            src="./Imagenes/${dish.name}.jpg" />
                         </div>
                         <div class="cat-list-text category_info">
                             <h3>${dish.name}</h3>
@@ -296,7 +380,7 @@ class RestaurantView {
                 `<div class="category__container">
                     <a data-category="${dish.name}">
                         <div class="cat-list-image category__photo"><img alt="${dish.name}"
-                            src="../Imagenes/${dish.name}.jpg" />
+                            src="./Imagenes/${dish.name}.jpg" />
                         </div>
                         <div class="cat-list-text category_info">
                             <h3>${dish.name}</h3>
@@ -323,7 +407,7 @@ class RestaurantView {
             `<div class="ficha__container">
                 <a data-category="${restaurants.name}">
                     <div class="ficha__imagen">
-                    <img src="../Imagenes/restaurante.jpg" class="img-fluid" alt="${restaurants.name}">
+                    <img src="./Imagenes/restaurante.jpg" class="img-fluid" alt="${restaurants.name}">
                     </div>
                     <div class="ficha__info">
                         <h3>${restaurants.name}</h3>
@@ -362,7 +446,7 @@ class RestaurantView {
                                 <div class="col-md-6">
                                     <div class="images p-3">
                                         <div class="text-center p-4"> <img id="main-image"
-                                            src="../Imagenes/${dish.name}.jpg"" /> </div>
+                                            src="./Imagenes/${dish.name}.jpg"" /> </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -411,6 +495,7 @@ class RestaurantView {
             });
         }
     }
+
 
 
 }
