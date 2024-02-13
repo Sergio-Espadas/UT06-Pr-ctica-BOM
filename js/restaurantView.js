@@ -491,7 +491,15 @@ class RestaurantView {
         const links = productList.querySelectorAll('a');
         for (const link of links) {
             link.addEventListener('click', (event) => {
-                handler(event.currentTarget.dataset.category);
+                const { category } = event.currentTarget.dataset;
+                this[EXCECUTE_HANDLER](
+                    handler,
+                    [category],
+                    '#single-product',
+                    { action: 'showProduct', category },
+                    '#single-product',
+                    event,
+                );
             });
         }
     }
