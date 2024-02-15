@@ -15,8 +15,11 @@ const historyActions = {
 
 window.addEventListener('popstate', (event) => {
     if (event.state) {
+        console.log(event)
         historyActions[event.state.action](event);
     }
 });
 
+
 history.replaceState({ action: 'init' }, null);
+

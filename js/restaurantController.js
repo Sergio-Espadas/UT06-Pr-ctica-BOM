@@ -74,6 +74,7 @@ class RestaurantController {
             ["mixto", "Salsa"],
             "URL_mixto_En_Salsa");
 
+
         // Crear un objeto de la clase Category
         let brochetas = new Category("Brochetas", "Pimiento, cebolla y carne...");
         let hamburguesas = new Category("Hamburguesas", "Jugosas y al punto");
@@ -137,15 +138,12 @@ class RestaurantController {
         this[VIEW].bindDishesCategoryListInMenu(this.handleDishesCategoryList,);
 
         // Alergenos
-        this[VIEW].bindDishesAllergenList(this.handleDishesAllergenList,);
         this[VIEW].bindDishesAllergenListInMenu(this.handleDishesAllergenList,);
 
         // Menus
-        this[VIEW].bindDishesMenuList(this.handleDishesMenuList,);
         this[VIEW].bindDishesMenuListInMenu(this.handleDishesMenuList,);
 
         // Restaurant
-        this[VIEW].bindRestaurantList(this.handleRestaurantList,);
         this[VIEW].bindRestaurantListInMenu(this.handleRestaurantList,);
     }
 
@@ -170,6 +168,7 @@ class RestaurantController {
     };
 
     handleDishesCategoryList = (title) => {
+        console.log(title);
         const category = (this[MODEL].getCategory(title));
         this[VIEW].listCategories(this[MODEL].getCategoryProducts(category),
             category.name);
@@ -177,6 +176,7 @@ class RestaurantController {
     };
 
     handleDishesAllergenList = (title) => {
+        console.log(title);
         const allergen = (this[MODEL].getAllergen(title));
         this[VIEW].listAllergens(this[MODEL].getAllergenProducts(allergen),
             allergen.name);
@@ -184,6 +184,7 @@ class RestaurantController {
     };
 
     handleDishesMenuList = (title) => {
+        console.log(title);
         const menu = (this[MODEL].getMenu(title));
         this[VIEW].listMenus(this[MODEL].getMenuProducts(menu),
             menu.name);
@@ -191,6 +192,7 @@ class RestaurantController {
     };
 
     handleRestaurantList = (title) => {
+        console.log(title);
         const restaurant = (this[MODEL].getRestaurant(title));
         this[VIEW].listRestaurant(this[MODEL].getRestaurantsDetails(restaurant),
             restaurant.name);
@@ -199,11 +201,28 @@ class RestaurantController {
     handleShowDetailsDishes = (name) => {
         try {
             let dish = this[MODEL].getDish(name);
-            console.log(dish);
+
             this[VIEW].showDetailsDishes(dish);
+
+            this[VIEW].bindShowProductInNewWindow(
+                this.handleShowProductInNewWindow,
+            );
+
         } catch (error) {
             this[VIEW].showDetailsDishes(null, 'No existe este producto en la página.');
         }
+    };
+
+    handleShowProductInNewWindow = (name) => {
+
+        console.log(name);
+        let dish = this[MODEL].getDish(name);
+
+        console.log(dish);
+
+        this[VIEW].showProductInNewWindow(dish);
+
+
     };
 
 }

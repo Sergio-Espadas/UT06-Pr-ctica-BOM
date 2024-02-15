@@ -7,22 +7,27 @@ class RestaurantView {
         this.menu = document.querySelector('.barra__navegacion');
         this.platos = document.querySelector('.platos');
         this.categorias = document.querySelector('.categories');
+        this.productWindow = null;
     }
 
     [EXCECUTE_HANDLER](handler, handlerArguments, scrollElement, data, url,
         event) {
         handler(...handlerArguments);
-        $(scrollElement).get(0).scrollIntoView();
+        const scroll = document.querySelector(scrollElement);
+        if (scroll) scroll.scrollIntoView();
         history.pushState(data, null, url);
         event.preventDefault();
     }
 
+
     bindInit(handler) {
         document.getElementById('init').addEventListener('click', (event) => {
-            handler();
+            this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#',
+                event);
         });
         document.getElementById('logo').addEventListener('click', (event) => {
-            handler();
+            this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#',
+                event);
         });
     }
 
@@ -51,17 +56,6 @@ class RestaurantView {
         this.categorias.append(container);
     }
 
-    bindInit(handler) {
-        document.getElementById('init').addEventListener('click', (event) => {
-            this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#',
-                event);
-        });
-        document.getElementById('logo').addEventListener('click', (event) => {
-            this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#',
-                event);
-        });
-    }
-
     showCategoriesInMenu(categories) {
         const div = document.createElement('div');
         div.classList.add('nav-item');
@@ -83,6 +77,7 @@ class RestaurantView {
 
     showAllergensInMenu(allergens) {
         const div = document.createElement('div');
+        div.id = 'allergen-list';
         div.classList.add('nav-item');
         div.classList.add('dropdown');
         div.insertAdjacentHTML('beforeend',
@@ -102,6 +97,7 @@ class RestaurantView {
 
     showMenusInMenu(menus) {
         const div = document.createElement('div');
+        div.id = 'menu-list';
         div.classList.add('nav-item');
         div.classList.add('dropdown');
         div.insertAdjacentHTML('beforeend',
@@ -121,6 +117,7 @@ class RestaurantView {
 
     showRestaurantsInMenu(restaurants) {
         const div = document.createElement('div');
+        div.id = 'restaurant-list';
         div.classList.add('nav-item');
         div.classList.add('dropdown');
         div.insertAdjacentHTML('beforeend',
@@ -202,24 +199,6 @@ class RestaurantView {
         }
     }
 
-    bindDishesAllergenList(handler) {
-        const categoryList = document.getElementById('category-list');
-        const links = categoryList.querySelectorAll('a');
-        for (const link of links) {
-            link.addEventListener('click', (event) => {
-                const { allergen } = event.currentTarget.dataset;
-                this[EXCECUTE_HANDLER](
-                    handler,
-                    [allergen],
-                    '#product-list',
-                    { action: 'productsCategoryList', allergen },
-                    '#category-list',
-                    event,
-                );
-            });
-
-        }
-    }
 
     bindDishesAllergenListInMenu(handler) {
         const navAlls = document.getElementById('navAlls');
@@ -239,24 +218,6 @@ class RestaurantView {
         }
     }
 
-    bindDishesMenuList(handler) {
-        const categoryList = document.getElementById('category-list');
-        const links = categoryList.querySelectorAll('a');
-        for (const link of links) {
-            link.addEventListener('click', (event) => {
-                const { menu } = event.currentTarget.dataset;
-                this[EXCECUTE_HANDLER](
-                    handler,
-                    [menu],
-                    '#product-list',
-                    { action: 'productsCategoryList', menu },
-                    '#category-list',
-                    event,
-                );
-            });
-        }
-    }
-
     bindDishesMenuListInMenu(handler) {
         const navMen = document.getElementById('navMen');
         const links = navMen.nextSibling.querySelectorAll('a');
@@ -268,24 +229,6 @@ class RestaurantView {
                     [menu],
                     '#product-list',
                     { action: 'productsCategoryList', menu },
-                    '#category-list',
-                    event,
-                );
-            });
-        }
-    }
-
-    bindRestaurantList(handler) {
-        const categoryList = document.getElementById('category-list');
-        const links = categoryList.querySelectorAll('a');
-        for (const link of links) {
-            link.addEventListener('click', (event) => {
-                const { restaurant } = event.currentTarget.dataset;
-                this[EXCECUTE_HANDLER](
-                    handler,
-                    [restaurant],
-                    '#product-list',
-                    { action: 'productsCategoryList', restaurant },
                     '#category-list',
                     event,
                 );
@@ -343,6 +286,8 @@ class RestaurantView {
 
     listAllergens(allergens, title) {
         this.platos.replaceChildren();
+        if (this.categories.children.length > 1)
+            this.categories.children[1].remove();
         const container = document.createElement('div');
         container.id = ("product-list");
         container.classList.add("dishes");
@@ -371,6 +316,8 @@ class RestaurantView {
 
     listMenus(menus, title) {
         this.platos.replaceChildren();
+        if (this.categories.children.length > 1)
+            this.categories.children[1].remove();
         const container = document.createElement('div');
         container.id = ("product-list");
         container.classList.add("dishes");
@@ -398,6 +345,8 @@ class RestaurantView {
 
     listRestaurant(restaurants, name) {
         this.platos.replaceChildren();
+        if (this.categories.children.length > 1)
+            this.categories.children[1].remove();
         const container = document.createElement('div');
         container.classList.add('ficha');
 
@@ -432,9 +381,8 @@ class RestaurantView {
         container.classList.add('container');
         container.classList.add('mt-5');
         container.classList.add('mb-5');
-
+        console.log(dish);
         if (dish) {
-            console.log(dish);
             container.id = 'single-product';
             container.classList.add(`${dish.name}-style`);
             container.insertAdjacentHTML('beforeend',
@@ -446,7 +394,7 @@ class RestaurantView {
                                 <div class="col-md-6">
                                     <div class="images p-3">
                                         <div class="text-center p-4"> <img id="main-image"
-                                            src="./Imagenes/${dish.name}.jpg"" /> </div>
+                                            src="./Imagenes/${dish.name}.jpg" /> </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -454,8 +402,8 @@ class RestaurantView {
                                         <div class="mt-4 mb-3"> <span class="text-uppercasebrand">${dish.name}</span>
                                             <h5 class="text-uppercase">${dish.description}</h5>
                                             <div class="price d-flex flex-row align-items-center">
-                                            
-                                            
+
+
                                             </div>
                                         </div>
                                         <p class="about">${dish.description}</p>
@@ -463,9 +411,10 @@ class RestaurantView {
                                             <h6 class="text-uppercase">Descripcion</h6>
                                             <p class="text-uppercase">${dish.ingredients}</p>
                                         </div>
-                                        <div class="cart mt-4 align-items-center"> 
-                                        <button dataserial="${dish.name}" 
-                                        class="btn btn-primary text-uppercase mr-2 px4">Pedir</button> </div>
+                                        <div class="cart mt-4 align-items-center">
+                                            <button id="b-buy" data-category="${dish.name}" class="btn btnprimary text-uppercase mr-2 px-4">Comprar</button>
+                                            <button id="b-open" data-category="${dish.name}" class="btn btnprimary text-uppercase mr-2 px-4">Abrir en nueva ventana</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -505,6 +454,83 @@ class RestaurantView {
     }
 
 
+    showProductInNewWindow(dish, message) {
+        const main = this.productWindow.document.querySelector('main');
+        const header = this.productWindow.document.querySelector('header nav');
+        main.replaceChildren();
+        header.replaceChildren();
+        let container;
+        console.log(dish);
+        if (dish) {
+            console.log(dish);
+            console.log(container)
+            container = document.createElement('div');
+            container.id = 'single-product';
+            container.classList.add(`${dish.name}-style`);
+            container.insertAdjacentHTML('beforeend',
+                `<div class="row d-flex
+        justify-content-center">
+                    <div class="col-md-10">
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="images p-3">
+                                        <div class="text-center p-4"> <img id="main-image"
+                                            src="./Imagenes/${dish.name}.jpg" /> </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="product p-4">
+                                        <div class="mt-4 mb-3"> <span class="text-uppercasebrand">${dish.name}</span>
+                                            <h5 class="text-uppercase">${dish.description}</h5>
+                                            <div class="price d-flex flex-row align-items-center">
+
+
+                                            </div>
+                                        </div>
+                                        <p class="about">${dish.description}</p>
+                                        <div class="sizes mt-5">
+                                            <h6 class="text-uppercase">Descripcion</h6>
+                                            <p class="text-uppercase">${dish.ingredients}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`);
+            container.insertAdjacentHTML('beforeend', '<button class="btn btnprimary text-uppercase m-2 px-4"	onClick = "window.close()" > Cerrar</button > ');
+
+        } else {
+            console.log(dish);
+            container.insertAdjacentHTML(
+                'beforeend',
+                `<div class="row d-flex justify-content-center">
+                    ${message}
+                </div>`,
+            );
+        }
+        main.append(container);
+        this.productWindow.document.body.scrollIntoView();
+    }
+
+    bindShowProductInNewWindow(handler) {
+        const bOpen = document.getElementById('b-open');
+        bOpen.addEventListener('click', (event) => {
+
+            if (!this.productWindow || this.productWindow.closed) {
+                this.productWindow = window.open('product.html', 'ProductWindow',
+                    'width=800, height=600, top=250, left=250, titlebar=yes, toolbar=no,menubar = no, location = no');
+                this.productWindow.addEventListener('DOMContentLoaded', () => {
+
+                    handler(event.target.dataset.category);
+                });
+            } else {
+                handler(event.target.dataset.category);
+                this.productWindow.focus();
+            }
+        });
+    }
 
 }
 
