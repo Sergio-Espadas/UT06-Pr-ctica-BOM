@@ -28,6 +28,10 @@ body {
   padding-left: 1em;
 }
 
+.barra__navegacion__inicio {
+  cursor: pointer;
+}
+
 .interaction__perfil {
   justify-self: end; /* Mueve el elemento al final */
   cursor: pointer;
@@ -149,11 +153,13 @@ body {
   flex-direction: column;
   align-items: center;
   border: 1px solid #1c1c1c;
+  border-radius: 5px;
   cursor: pointer;
 }
 
 .category__photo {
   border: 1px solid #1c1c1c;
+  border-radius: 5px;
 }
 
 .category_info {
@@ -297,12 +303,14 @@ label.radio input:checked + span {
 
 .ficha__container {
   border: 2px solid #1c1c1c;
+  border-radius: 5px;
 }
 
 .ficha__info {
   display: grid;
   place-items: center center;
   border: 2px solid #1c1c1c;
+  border-radius: 5px;
 }
 
 .ficha__info h3 {

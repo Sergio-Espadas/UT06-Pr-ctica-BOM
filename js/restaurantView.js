@@ -1,13 +1,18 @@
 const EXCECUTE_HANDLER = Symbol('excecuteHandler');
 
 class RestaurantView {
+
+
+
     constructor() {
         this.main = document.getElementsByTagName('main')[0];
         this.categories = document.getElementById('categorias_principal');
         this.menu = document.querySelector('.barra__navegacion');
         this.platos = document.querySelector('.platos');
         this.categorias = document.querySelector('.categories');
+        this.migas = document.querySelector('.breadcrumb');
         this.productWindow = null;
+        this.openWindowMap = new Map();
     }
 
     [EXCECUTE_HANDLER](handler, handlerArguments, scrollElement, data, url,
@@ -22,11 +27,11 @@ class RestaurantView {
 
     bindInit(handler) {
         document.getElementById('init').addEventListener('click', (event) => {
-            this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#',
+            this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#inicio',
                 event);
         });
         document.getElementById('logo').addEventListener('click', (event) => {
-            this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#',
+            this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#inicio',
                 event);
         });
     }
@@ -35,12 +40,12 @@ class RestaurantView {
         if (this.platos.children.length > 1)
             this.platos.children[1].remove();
         const container = document.createElement('div');
-        container.id = 'category-list';
+        container.id = 'categorylist';
         container.classList.add("category");
         for (const category of categories) {
             container.insertAdjacentHTML('beforeend',
                 `<div class="category__container">
-                    <a data-category="${category.name.name}" href="#product-list">
+                    <a data-category="${category.name.name}" href="#categorylist">
                         <div class="cat-list-image category__photo"><img alt="${category.name.name}"
                             src="./Imagenes/${category.name.name}.jpg" />
                         </div>
@@ -62,14 +67,14 @@ class RestaurantView {
         div.classList.add('dropdown');
         div.insertAdjacentHTML('beforeend',
             `<a class="nav-link dropdown-toggle"
-            href="#" id="navCats" role="button"
+            href="#categorylist" id="navCats" role="button"
             data-bs-toggle="dropdown" aria-expanded="false">
             Categorías</a>`);
         const container = document.createElement('ul');
         container.classList.add('dropdown-menu');
         for (const category of categories) {
             container.insertAdjacentHTML('beforeend', `<div><a data-category="${category.name.name}" 
-            class="dropdown-item" href="#productlist">${category.name.name}</a></div>`);
+            class="dropdown-item" href="#category">${category.name.name}</a></div>`);
         }
         div.append(container);
         this.menu.append(div);
@@ -82,14 +87,14 @@ class RestaurantView {
         div.classList.add('dropdown');
         div.insertAdjacentHTML('beforeend',
             `<a class="nav-link dropdown-toggle"
-            href="#" id="navAlls" role="button"
+            href="#allergenlist" id="navAlls" role="button"
             data-bs-toggle="dropdown" aria-expanded="false">
             Alergenos</a>`);
         const container = document.createElement('ul');
         container.classList.add('dropdown-menu');
         for (const allergen of allergens) {
             container.insertAdjacentHTML('beforeend', `<div><a data-allergen="${allergen.name.name}" 
-            class="dropdown-item" href="#productlist">${allergen.name.name}</a></div>`);
+            class="dropdown-item" href="#allergen">${allergen.name.name}</a></div>`);
         }
         div.append(container);
         this.menu.append(div);
@@ -102,14 +107,14 @@ class RestaurantView {
         div.classList.add('dropdown');
         div.insertAdjacentHTML('beforeend',
             `<a class="nav-link dropdown-toggle"
-            href="#" id="navMen" role="button"
+            href="#menulist" id="navMen" role="button"
             data-bs-toggle="dropdown" aria-expanded="false">
             Menus</a>`);
         const container = document.createElement('ul');
         container.classList.add('dropdown-menu');
         for (const menu of menus) {
             container.insertAdjacentHTML('beforeend', `<div><a data-menu="${menu.name.name}" 
-            class="dropdown-item" href="#productlist">${menu.name.name}</a></div>`);
+            class="dropdown-item" href="#menu">${menu.name.name}</a></div>`);
         }
         div.append(container);
         this.menu.append(div);
@@ -122,14 +127,14 @@ class RestaurantView {
         div.classList.add('dropdown');
         div.insertAdjacentHTML('beforeend',
             `<a class="nav-link dropdown-toggle"
-            href="#" id="navRes" role="button"
+            href="#restaurantlist" id="navRes" role="button"
             data-bs-toggle="dropdown" aria-expanded="false">
             Restaurantes</a>`);
         const container = document.createElement('ul');
         container.classList.add('dropdown-menu');
         for (const res of restaurants) {
             container.insertAdjacentHTML('beforeend', `<div><a data-restaurant="${res.name}" 
-            class="dropdown-item" href="#productlist">${res.name}</a></div>`);
+            class="dropdown-item" href="#restaurant">${res.name}</a></div>`);
         }
         div.append(container);
         this.menu.append(div);
@@ -146,7 +151,7 @@ class RestaurantView {
             console.log(dish);
             container.insertAdjacentHTML('beforeend',
                 `<div class="category__container">
-                    <a data-category="${dish.dishes[0].name[aleatorio].name}" href="#product-list">
+                    <a data-category="${dish.dishes[0].name[aleatorio].name}" href="#disheslist">
                         <div class="cat-list-image category__photo"><img alt="${dish.dishes[0].name[aleatorio].name}"
                             src="./Imagenes/${dish.dishes[0].name[aleatorio].name}.jpg" />
                         </div>
@@ -162,24 +167,27 @@ class RestaurantView {
         this.platos.append(container);
     }
 
+    // Estas son las imagenes del inicio
     bindDishesCategoryList(handler) {
-        const categoryList = document.getElementById('category-list');
+        const categoryList = document.getElementById('categorylist');
         const links = categoryList.querySelectorAll('a');
         for (const link of links) {
             link.addEventListener('click', (event) => {
                 const { category } = event.currentTarget.dataset;
+                console.log(category);
                 this[EXCECUTE_HANDLER](
                     handler,
                     [category],
-                    '#product-list',
-                    { action: 'productsCategoryList', category },
-                    '#category-list',
+                    '#dish-list',
+                    { action: 'CategoryList', category },
+                    '#categorylist',
                     event,
                 );
             });
         }
     }
 
+    // Este es el desplegable de las categorias
     bindDishesCategoryListInMenu(handler) {
         const navCats = document.getElementById('navCats');
         const links = navCats.nextSibling.querySelectorAll('a');
@@ -189,9 +197,9 @@ class RestaurantView {
                 this[EXCECUTE_HANDLER](
                     handler,
                     [category],
-                    '#product-list',
-                    { action: 'productsCategoryList', category },
-                    '#category-list',
+                    '#dish-list',
+                    { action: 'CategoryList', category },
+                    '#categorylist',
                     event,
                 );
             });
@@ -199,7 +207,7 @@ class RestaurantView {
         }
     }
 
-
+    // Este es desplegable de los alergenos 
     bindDishesAllergenListInMenu(handler) {
         const navAlls = document.getElementById('navAlls');
         const links = navAlls.nextSibling.querySelectorAll('a');
@@ -209,9 +217,9 @@ class RestaurantView {
                 this[EXCECUTE_HANDLER](
                     handler,
                     [allergen],
-                    '#product-list',
-                    { action: 'productsCategoryList', allergen },
-                    '#category-list',
+                    '#dish-list',
+                    { action: 'AllergenListInMenu', allergen },
+                    '#allergenlist',
                     event,
                 );
             });
@@ -227,9 +235,9 @@ class RestaurantView {
                 this[EXCECUTE_HANDLER](
                     handler,
                     [menu],
-                    '#product-list',
-                    { action: 'productsCategoryList', menu },
-                    '#category-list',
+                    '#dish-list',
+                    { action: 'MenuListInMenu', menu },
+                    '#menulist',
                     event,
                 );
             });
@@ -245,10 +253,29 @@ class RestaurantView {
                 this[EXCECUTE_HANDLER](
                     handler,
                     [restaurant],
-                    '#product-list',
-                    { action: 'productsCategoryList', restaurant },
-                    '#category-list',
+                    '#dish-list',
+                    { action: 'RestaurantListInMenu', restaurant },
+                    '#restaurantlist',
                     event,
+                );
+            });
+        }
+    }
+
+    bindShowDetailsDishes(handler) {
+        const productList = document.getElementById('dish-list');
+        const links = productList.querySelectorAll('a');
+        for (const link of links) {
+            link.addEventListener('click', (event) => {
+                const { category } = event.currentTarget.dataset;
+                this[EXCECUTE_HANDLER](
+                    handler,
+                    [category],
+                    '#dish-details',
+                    { action: 'showProduct', category },
+                    '#detailsDish',
+                    event,
+                    console.log(category)
                 );
             });
         }
@@ -259,7 +286,7 @@ class RestaurantView {
         if (this.categories.children.length > 1)
             this.categories.children[1].remove();
         const container = document.createElement('div');
-        container.id = ("product-list");
+        container.id = ("dish-list");
         container.classList.add("dishes");
 
         for (const dish of categories) {
@@ -289,7 +316,7 @@ class RestaurantView {
         if (this.categories.children.length > 1)
             this.categories.children[1].remove();
         const container = document.createElement('div');
-        container.id = ("product-list");
+        container.id = ("dish-list");
         container.classList.add("dishes");
 
         for (const dish of allergens) {
@@ -319,7 +346,7 @@ class RestaurantView {
         if (this.categories.children.length > 1)
             this.categories.children[1].remove();
         const container = document.createElement('div');
-        container.id = ("product-list");
+        container.id = ("dish-list");
         container.classList.add("dishes");
 
         for (const dish of menus) {
@@ -348,9 +375,8 @@ class RestaurantView {
         if (this.categories.children.length > 1)
             this.categories.children[1].remove();
         const container = document.createElement('div');
+        container.id = ("dish-list");
         container.classList.add('ficha');
-
-        console.log(restaurants);
 
         container.insertAdjacentHTML('beforeend',
             `<div class="ficha__container">
@@ -383,7 +409,7 @@ class RestaurantView {
         container.classList.add('mb-5');
         console.log(dish);
         if (dish) {
-            container.id = 'single-product';
+            container.id = 'dish-details';
             container.classList.add(`${dish.name}-style`);
             container.insertAdjacentHTML('beforeend',
                 `<div class="row d-flex
@@ -399,7 +425,7 @@ class RestaurantView {
                                 </div>
                                 <div class="col-md-6">
                                     <div class="product p-4">
-                                        <div class="mt-4 mb-3"> <span class="text-uppercasebrand">${dish.name}</span>
+                                        <div class="mt-4 mb-3"><a href="#detailsDish"><span class="text-uppercasebrand">${dish.name}</span></a>
                                             <h5 class="text-uppercase">${dish.description}</h5>
                                             <div class="price d-flex flex-row align-items-center">
 
@@ -422,6 +448,7 @@ class RestaurantView {
                     </div>
                 </div>`);
 
+            container.insertAdjacentHTML('beforeend', '<button id="b-close" class="btn btn-primary text-uppercase m-2 px-4">Cerrar todas las ventanas</button>');
 
         } else {
             console.log(dish);
@@ -435,24 +462,6 @@ class RestaurantView {
         this.platos.append(container);
     }
 
-    bindShowDetailsDishes(handler) {
-        const productList = document.getElementById('product-list');
-        const links = productList.querySelectorAll('a');
-        for (const link of links) {
-            link.addEventListener('click', (event) => {
-                const { category } = event.currentTarget.dataset;
-                this[EXCECUTE_HANDLER](
-                    handler,
-                    [category],
-                    '#single-product',
-                    { action: 'showProduct', category },
-                    '#single-product',
-                    event,
-                );
-            });
-        }
-    }
-
 
     showProductInNewWindow(dish, message) {
         const main = this.productWindow.document.querySelector('main');
@@ -462,10 +471,8 @@ class RestaurantView {
         let container;
         console.log(dish);
         if (dish) {
-            console.log(dish);
-            console.log(container)
             container = document.createElement('div');
-            container.id = 'single-product';
+            container.id = 'dish-details';
             container.classList.add(`${dish.name}-style`);
             container.insertAdjacentHTML('beforeend',
                 `<div class="row d-flex
@@ -516,20 +523,33 @@ class RestaurantView {
 
     bindShowProductInNewWindow(handler) {
         const bOpen = document.getElementById('b-open');
+
         bOpen.addEventListener('click', (event) => {
+            const category = event.target.dataset.category;
 
-            if (!this.productWindow || this.productWindow.closed) {
-                this.productWindow = window.open('product.html', 'ProductWindow',
+            if (!this.openWindowMap.has(category)) {
+                const newWindow = window.open('product.html', category,
                     'width=800, height=600, top=250, left=250, titlebar=yes, toolbar=no,menubar = no, location = no');
-                this.productWindow.addEventListener('DOMContentLoaded', () => {
-
-                    handler(event.target.dataset.category);
+                newWindow.addEventListener('DOMContentLoaded', () => {
+                    handler(category);
                 });
+                this.openWindowMap.set(category, newWindow);
+                this.productWindow = newWindow;
             } else {
-                handler(event.target.dataset.category);
-                this.productWindow.focus();
+                const openWindow = this.openWindowMap.get(category);
+                openWindow.focus();
             }
+
+            const bClose = document.getElementById('b-close');
+            bClose.addEventListener('click', this.closeAllWindows.bind(this));
         });
+    }
+
+    closeAllWindows() {
+        for (const [category, openWindow] of this.openWindowMap.entries()) {
+            openWindow.close();
+        }
+        this.openWindowMap.clear();
     }
 
 }
